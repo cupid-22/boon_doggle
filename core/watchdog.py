@@ -24,22 +24,24 @@ class FileHandler:
         except BaseException as B:
             raise B
 
-    @staticmethod
-    def decider(file):
+    def decider(self, file):
         try:
             ext = file.lower().rpartition('.')[-1]
             if ext in ["pdf", "docx", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
+                self.folder_destination = '~/Videos'
+                # TODO Log here
             elif ext in ["pdf", "png", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
+                self.folder_destination = '~/Photos'
+                # TODO Log here
             elif ext in ["pdf", "png", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
+                self.folder_destination = '~/Documents'
+                # TODO Log here
             elif ext in ["pdf", "png", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
-            elif ext in ["pdf", "png", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
-            elif ext in ["pdf", "png", "jpg", "jpeg", "xls", "xlsx", "doc", "docx", "csv", "txt", 'gif']:
-                raise AttributeError('Not Supported File Format {}'.format(ext))
+                self.folder_destination = '~/Music'
+                # TODO Log here
+            else:
+                pass
+                # TODO Log here
         except BaseException as B:
             raise B
 
