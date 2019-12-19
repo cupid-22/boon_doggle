@@ -1,13 +1,14 @@
 import logging
 import sys
 import threading
-import time
 import shutil
-import time
-from asyncio import sleep
-from os import listdir, path, mkdir, chdir
+from time import sleep
+from os import listdir, path, mkdir
 from os.path import join
 from multiprocessing import cpu_count
+import signal
+
+TIMEOUT = 5
 
 
 class FileHandler:
@@ -130,9 +131,28 @@ def validateParams(s_user, s_mode, s_track):
         raise a
 
 
+def timedOut(*kwargs):
+    try:
+        raise TimeoutError()
+    except TimeoutError as T:
+        raise T
+
+
+signal.signal(signal.SIGALRM, timedOut)
+
 if __name__ == '__main__':
     try:
-        prompt_available = input('Would you like to go with defaults (0/1): ')
+
+        try:
+            signal.alarm(TIMEOUT)
+
+            prompt_available = input('Would you like to go with defaults (0/1): ')
+
+            signal.alarm(0)
+
+        except TimeoutError as S:
+            prompt_available = 1
+
         if prompt_available == 0:
             selection_user = int(input('Enter the selection type: '))
             selection_mode = int(input('Enter the execution mode: '))
@@ -150,14 +170,16 @@ if __name__ == '__main__':
                 exit('watchdog exited with code 0')
 
             Handler = FileHandler(selection=selection_user, mode=selection_mode, track=selection_track)
-
+            threading.Thread(target=Handler.tracker())
         else:
+
             Handler = FileHandler()
 
             log_format = "%(asctime)s: %(message)s"
             logging.basicConfig(format=log_format, level=logging.INFO, datefmt="%H:%M:%S")
+            signal.signal(signal.SIGALRM, Handler.tracker())
 
             threading.Thread(target=Handler.tracker())
 
     except BaseException as B:
-        logging.critical(msg='watchdog exited with return code 0\n' + str(B))
+        logging.critical(msg='\nwatchdog exited with return code 0\n' + str(B))
