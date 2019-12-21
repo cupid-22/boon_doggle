@@ -8,8 +8,6 @@ from os.path import join
 from multiprocessing import cpu_count
 import signal
 
-TIMEOUT = 5
-
 
 class FileHandler:
 
@@ -53,20 +51,48 @@ class FileHandler:
                 logging.info('No mode found switching to default Normal Mode')
 
             if self.selection_type == 0:
+                # Default No Folder traversal...
+                while True:
+
+                    for filename in listdir(self.source_to_track):
+                        try:
+                            self.decider(file=str(filename))
+
+                            if self.folder_destination != '':
+                                print('Moving ', filename, 'to', self.folder_destination)
+                                shutil.move(join(self.source_to_track, filename),
+                                            join(self.folder_destination, filename))
+                                self.folder_destination = ''
+
+                        except FileNotFoundError:
+                            mkdir(self.folder_destination)
+                            continue
+
+                        except BaseException as B:
+                            print('error encountered', B)
+                            pass
+                    sleep(20)
+
+            elif self.selection_type == 1:
+                # Deep_roots
                 for filename in listdir(self.source_to_track):
                     try:
                         self.decider(file=str(filename))
+                        if path.isdir(filename):
+                            continue
                         if self.folder_destination != '':
                             shutil.move(join(self.source_to_track, filename), join(self.folder_destination, filename))
                             self.folder_destination = ''
+                        print('Sleeping for 5 sec')
                         sleep(5)
+                        print('Awaken')
 
                     except FileNotFoundError:
                         mkdir(self.folder_destination)
                         continue
 
                     except BaseException as B:
-                        # TODO log here
+                        print('error encountered', B)
                         pass
             else:
                 exit('!! No Selection Captured !!')
@@ -131,20 +157,18 @@ def validateParams(s_user, s_mode, s_track):
         raise a
 
 
-def timedOut(*kwargs):
-    try:
-        raise TimeoutError()
-    except TimeoutError as T:
-        raise T
-
-
-signal.signal(signal.SIGALRM, timedOut)
-
 if __name__ == '__main__':
     try:
 
         try:
-            signal.alarm(TIMEOUT)
+
+            def handler(signum, frame):
+                raise TimeoutError("Couldn't fetch response!")
+
+
+            signal.signal(signal.SIGALRM, handler)
+
+            signal.alarm(1)
 
             prompt_available = input('Would you like to go with defaults (0/1): ')
 
@@ -177,7 +201,6 @@ if __name__ == '__main__':
 
             log_format = "%(asctime)s: %(message)s"
             logging.basicConfig(format=log_format, level=logging.INFO, datefmt="%H:%M:%S")
-            signal.signal(signal.SIGALRM, Handler.tracker())
 
             threading.Thread(target=Handler.tracker())
 
