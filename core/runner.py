@@ -1,10 +1,13 @@
 from .watchdog import logging, Organiser
 import signal
 import threading
-from ..support import judge, assigner
+from support import assigner
+from support.judge import Porter
 
 
 class Runner(Organiser):
+    def __init__(self):
+        super().__init__()
 
     def classifier(self):
         try:
@@ -26,7 +29,7 @@ class Runner(Organiser):
                 selection_mode = int(input('Enter the execution mode: '))
                 selection_track = str(input('Enter folder to track: '))
 
-                judge.Porter().validateParams(selection_user, selection_mode, selection_track)
+                Porter().validateParams(selection_user, selection_mode, selection_track)
 
                 Organiser(selection=selection_user, mode=selection_mode, track=selection_track)
             else:

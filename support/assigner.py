@@ -1,8 +1,9 @@
-from os import path
-from ..core.watchdog import Organiser, mkdir, nice, logging
+from core.watchdog import Organiser, nice, logging
 
 
 class Checker(Organiser):
+    def __init__(self):
+        super().__init__()
 
     def AffirmingSetting(self):
         """

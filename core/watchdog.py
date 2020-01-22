@@ -4,8 +4,10 @@ from time import sleep
 from os import listdir, mkdir, nice, makedirs
 from os.path import join, expanduser, exists, isdir
 
+from .runner import Porter
 
-class Organiser:
+
+class Organiser(object):
 
     def __init__(self, track='~/Downloads/', selection=0, mode=0):
         """
@@ -27,6 +29,8 @@ class Organiser:
         self.source_to_track = expanduser(track)
         self.folder_destination = ''
         self._priority = None
+        print(dir(self))
+        self.PorterObj = judge.Porter()
 
     def DeepRootMode(self):
         """
@@ -40,7 +44,7 @@ class Organiser:
 
         for filename in listdir(self.source_to_track):
             try:
-                self.decider(file=str(filename))
+                self.PorterObj.decider(file=str(filename))
                 if isdir(filename):
                     continue
                 if self.folder_destination != '':
@@ -67,7 +71,7 @@ class Organiser:
 
             for filename in listdir(self.source_to_track):
                 try:
-                    self.decider(file=str(filename))
+                    self.PorterObj.decider(file=str(filename))
 
                     if self.folder_destination != '':
                         print('Moving ', filename, 'to', self.folder_destination)
