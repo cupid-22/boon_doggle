@@ -1,14 +1,16 @@
-from core.watchdog import Organiser, expanduser, makedirs, exists
+from core.watchdog import Organiser
+from os import makedirs
+from os.path import expanduser, exists
 
 
 class Porter(Organiser):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
 
     def decider(self, file):
         try:
             ext = file.lower().strip().rpartition('.')[-1]
-            if ext in ["pdf", 'txt', "docx", "doc", "odt", "rtf", "xlsx", "csv", 'gif', 'wps', 'wpd', 'ppt', 'pptx',
+            if ext in ["pdf", 'txt', "docx", "html", "doc", "odt", "rtf", "xlsx", "csv", 'gif', 'wps', 'wpd', 'ppt', 'pptx',
                        'xls']:
                 self.folder_destination = expanduser('~/Documents/')
                 # TODO Log here
@@ -31,7 +33,7 @@ class Porter(Organiser):
                 # TODO Log here
                 pass
 
-            if not exists(self.folder_destination):
+            if self.folder_destination != '' and not exists(self.folder_destination):
                 makedirs(self.folder_destination)
 
         except BaseException as B:

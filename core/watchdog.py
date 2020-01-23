@@ -1,10 +1,4 @@
-import logging
-import shutil
-from time import sleep
-from os import listdir, mkdir, nice, makedirs
-from os.path import join, expanduser, exists, isdir
-
-from .runner import Porter
+from os.path import expanduser
 
 
 class Organiser(object):
@@ -29,61 +23,4 @@ class Organiser(object):
         self.source_to_track = expanduser(track)
         self.folder_destination = ''
         self._priority = None
-        print(dir(self))
-        self.PorterObj = judge.Porter()
 
-    def DeepRootMode(self):
-        """
-            Notes:
-                #  What: this is DeepRoot selection mode which include
-                # * Deeper Folder traversal Depth [Default: Two folder].
-                # * Above Avg cpu overhead with check_call at 8 sec [ Has to check in deeper nodes ].
-                # * MultiThreading for each check_call.
-                # * Considerable above priority over other process.
-        """
-
-        for filename in listdir(self.source_to_track):
-            try:
-                self.PorterObj.decider(file=str(filename))
-                if isdir(filename):
-                    continue
-                if self.folder_destination != '':
-                    shutil.move(join(self.source_to_track, filename), join(self.folder_destination, filename))
-                    self.folder_destination = ''
-                print('Sleeping for 5 sec')
-                sleep(5)
-                print('Awaken')
-
-            except BaseException as B:
-                print('error encountered', B)
-                continue
-
-    def NormalMode(self):
-        """
-            Notes:
-                #  what: this is Default selection which include
-                # * No Deeper Folder traversal.
-                # * Avg cpu overhead with check_call at 10 sec.
-                # * MultiThreading for each check_call.
-                # * considerable priority over other process.
-        """
-        while True:
-
-            for filename in listdir(self.source_to_track):
-                try:
-                    self.PorterObj.decider(file=str(filename))
-
-                    if self.folder_destination != '':
-                        print('Moving ', filename, 'to', self.folder_destination)
-                        shutil.move(join(self.source_to_track, filename),
-                                    join(self.folder_destination, filename))
-                        self.folder_destination = ''
-
-                except FileNotFoundError:
-                    mkdir(self.folder_destination)
-                    continue
-
-                except BaseException as B:
-                    logging.error(B)
-                    continue
-            sleep(20)

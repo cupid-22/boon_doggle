@@ -1,4 +1,7 @@
-from core.watchdog import Organiser, nice, logging
+from core.watchdog import Organiser
+from os import nice
+
+import logging
 
 
 class Checker(Organiser):
