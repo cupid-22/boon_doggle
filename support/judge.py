@@ -1,6 +1,7 @@
 from core.watchdog import Organiser
 from os import makedirs
 from os.path import expanduser, exists
+import logging
 
 
 class Porter(Organiser):
@@ -10,7 +11,8 @@ class Porter(Organiser):
     def decider(self, file):
         try:
             ext = file.lower().strip().rpartition('.')[-1]
-            if ext in ["pdf", 'txt', "docx", "html", "doc", "odt", "rtf", "xlsx", "csv", 'gif', 'wps', 'wpd', 'ppt', 'pptx',
+            if ext in ["pdf", 'txt', "docx", "html", "doc", "odt", "rtf", "xlsx", "csv", 'gif', 'wps', 'wpd', 'ppt',
+                       'pptx',
                        'xls']:
                 self.folder_destination = expanduser('~/Documents/')
                 # TODO Log here
@@ -31,9 +33,9 @@ class Porter(Organiser):
                 # TODO Log here
             else:
                 # TODO Log here
-                pass
+                logging.info('Received file {0} could not be sorted')
 
-            if self.folder_destination != '' and not exists(self.folder_destination):
+            if self.folder_destination and not exists(self.folder_destination):
                 makedirs(self.folder_destination)
 
         except BaseException as B:

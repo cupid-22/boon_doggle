@@ -47,15 +47,17 @@ class Moper(Organiser):
         """
         while True:
 
-            for filename in listdir(self.source_to_track):
+            for filename in listdir(self.PorterObj.source_to_track):
                 try:
-                    if not isfile(join(self.source_to_track, filename)):
+                    if not isfile(join(self.PorterObj.source_to_track, filename)):
+                        self.PorterObj.Logger(error='{0} is skipped as its not a file'.format(
+                            join(self.PorterObj.source_to_track, filename)))
                         continue
 
                     self.PorterObj.decider(file=str(filename))
 
-                    if self.PorterObj.folder_destination != '':
-                        print('Moving ', filename, 'to', self.PorterObj.folder_destination)
+                    if self.PorterObj.folder_destination:
+                        logging.info('Moving {0} to {1}'.format(filename, self.PorterObj.folder_destination))
                         shutil.move(join(self.PorterObj.source_to_track, filename),
                                     join(self.PorterObj.folder_destination, filename))
                         del self.PorterObj.folder_destination
